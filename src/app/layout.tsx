@@ -3,6 +3,7 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import Navbar from '@/components/Navbar'
+import { ThemeProvider } from '@/components/Providers'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -18,9 +19,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={cn(inter.className,'antialiased min-h-screen pt-10')}>
-        <Navbar />
-        {children}
+      <body className={cn(inter.className,'antialiased min-h-screen pt-10 bg-indigo-500 dark:bg-slate-900 dark:text-white')}>
+        <ThemeProvider>
+          <Navbar />
+          {children}
+        </ThemeProvider> 
       </body>
     </html>
   )
