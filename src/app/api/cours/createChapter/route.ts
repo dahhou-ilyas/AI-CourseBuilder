@@ -4,6 +4,7 @@ import { ZodError } from 'zod';
 import { strict_output } from '@/lib/gpt';
 import { test } from '@/lib/test';
 import { getUnsplashImage } from '@/lib/unsplash';
+import { prisma } from '@/lib/db';
 
 export async function POST(req:Request,res:Response) {
     console.log('object');
@@ -11,19 +12,19 @@ export async function POST(req:Request,res:Response) {
         const body=await req.json();
         const {title,units} = createChaptersSchema.parse(body);
         
-        type outputUnits={
+        type OutputUnits={
             title:string;
             chapters:{
                 youtube_search_query:string;
                 chapter_title:string;
             }[]
-        }
+        }[]
         
 
-        let output_unit:outputUnits=await strict_output(
+        let output_unit:OutputUnits=await strict_output(
             'You are an AI capable of curating course content, coming up with relevant chapter titles, and finding relevant youtube video for each chapter',
             units.map((elem)=>{
-                return `It your job to create a course about ${title}.First give him introduction of title, then the user has requested to create chapters for each of the units ${elem}. Then, for each chapter, provide a detailed youtube search query that can be used to find an informative educational video for each chapter. Each query should give an educational informative course in youtube.`
+                return `It your job to create a course about ${title}.First give him introduction of ${title}, then the user has requested to create chapters for each of the units ${elem}. Then, for each chapter, provide a detailed youtube search query that can be used to find an informative educational video for each chapter. Each query should give an educational informative course in youtube.`
             }),
             {
                 title:"title of the unit",
@@ -41,7 +42,33 @@ export async function POST(req:Request,res:Response) {
 
         const course_image=await getUnsplashImage(imageSearchTerm.image_search_term);
 
-        return NextResponse.json({output_unit,imageSearchTerm,course_image})
+        const course =await prisma.course.create({
+            data:{
+                name:title,
+                image:course_image
+            }
+        })
+
+        for(const unit of output_unit) {
+            const title = unit.title;
+            const prismaUnit=await prisma.unit.create({
+                data : {
+                    name:title,
+                    courseId:course.id
+                }
+            })
+            await prisma.chapter.createMany({
+                data : unit.chapters.map((chap)=>{
+                    return{
+                       name : chap.chapter_title,
+                       youtubeSearchQuery : chap.youtube_search_query,
+                       unitId : prismaUnit.id
+                    }
+                })
+            })
+        }
+
+        return NextResponse.json({cours_id:course.id})
     } catch (error) {
         if(error instanceof ZodError){
             return new NextResponse('invalide body',{status:400})

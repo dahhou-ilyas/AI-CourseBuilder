@@ -1,0 +1,5 @@
+axios
+zod
+prisma
+openai
+@tanstack/react-query
