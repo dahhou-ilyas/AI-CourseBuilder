@@ -59,7 +59,7 @@ function CreateCoursForm({}: Props) {
                     title:'Success',
                     description:"cours generating successfully"
                 })
-                router.push(`course/${cours_id}`)
+                router.push(`/create/${cours_id}`)
             },onError:(err)=>{
                 console.log(err);
                 toast({
