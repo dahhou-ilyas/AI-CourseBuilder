@@ -4,6 +4,7 @@ import { Info } from 'lucide-react';
 import { redirect } from 'next/navigation';
 import React from 'react'
 import InfoCours from './compona2';
+import ConfirmeChapter from '@/components/ConfirmeChapter';
 
 type Props = {
   params:{
@@ -44,8 +45,8 @@ async function CreateChapters({params:{coursId}}: Props) {
       </h1>
       <div className='flex mt-1 border-none '>
         <InfoCours/>
-        
       </div>
+      <ConfirmeChapter course={cours} />
     </div>
   )
 }
