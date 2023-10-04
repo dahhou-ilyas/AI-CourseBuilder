@@ -50,7 +50,11 @@ function ConfirmeChapter({course}: Props) {
                     <ChevronLeftCircleIcon className='w-4 h-4 mr-2' strokeWidth={4}/>
                     Back
                 </Link>
-                <Button type='button' className='ml-4 font-semibold bg-indigo-300 text-black dark:bg-secondary dark:text-white'>
+                <Button onClick={()=>{
+                    Object.values(chapterRef).forEach((ref)=>{
+                        ref.current?.triggerLoad()
+                    })
+                }} type='button' className='ml-4 font-semibold bg-indigo-300 text-black dark:bg-secondary dark:text-white'>
                     <ChevronRightCircle className='w-4 h-4 mr-2' strokeWidth={4}/>
                     Generate
                 </Button>
