@@ -1,14 +1,26 @@
 import { NextResponse } from "next/server"
+import { z } from "zod"
 
 
-const sleep=async ()=>new Promise((resole)=>{
-    setTimeout(resole, Math.random() * 3000)
-}) 
+const bodyParser=z.object({
+    chapterId:z.string()
+})
+
 export async function POST(req:Response,res:Response){
     try {
-        await sleep()
+        const body=await req.json()
+        const {chapterId}=bodyParser.parse(body)
+        
         return NextResponse.json({message:'hello'})
     } catch (error) {
-        
+        if(error instanceof z.ZodError){
+            return NextResponse.json({
+              success:false, error:"Invalid body"
+            },{status:400})
+        }else{
+            NextResponse.json({
+                success:false, error:"unkown"
+            },{status:500})
+        }
     }
 }

@@ -16,18 +16,26 @@ export type ChapterCardHandler={
 
 //pour passer une Ref sur un componant spécialiser c'est à dire nous qui nous alons crée il faut utiliser ()
 const  CHpaterCard=React.forwardRef<ChapterCardHandler,Props>(({chapter,chapterIndex},ref)=> {
-    React.useImperativeHandle(ref,()=>({
-        async triggerLoad(){
-            console.log("object");
-        }
-    }))
+    
     const [sucess,setSucess]=useState<boolean | null>(null);
     const {mutate:getChapterInfo,isLoading}=useMutation({
         mutationFn:async ()=>{
-            const response=await axios. post("/api/chapter/getInfo")
+            const response=await axios. post("/api/chapter/getInfo",{
+               chapterId: chapter.id
+            })
             return response.data
         }
     })
+    React.useImperativeHandle(ref,()=>({
+        //lorsque on click sur le button generating on execute le trigger function cette fonction appller en parallele getChapterInfo sur chaque card de chaptire cela permet de call endpoint "/api/chapter/getInfo" parallelement
+        async triggerLoad(){
+            getChapterInfo(undefined,{
+                onSuccess:()=>{
+                    console.log("success");
+                }
+            })
+        }
+    }))
   return (
     <div key={chapter.id} className={
         cn("px-4 py-2 mt-2 rounded flex justify-between",{
