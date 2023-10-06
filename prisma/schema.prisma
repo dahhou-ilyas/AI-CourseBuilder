@@ -7,9 +7,11 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = "mysql://root:python3.3.3@localhost:3306/cous_ai"
+  url      = "mysql://root:password@db:3306/coursai"
   relationMode = "prisma"
 }
+
+
 
 
 //I get all this code from https://next-auth.js.org/v3/adapters/prisma and i make change

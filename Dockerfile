@@ -3,8 +3,15 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-COPY . .
+COPY package.json .
+
+COPY package-lock.json .
 
 RUN npm install
 
-CMD npm run dev
+COPY . .
+
+EXPOSE 3000
+
+
+CMD ["sh", "-c", "npx prisma migrate dev && npm run dev"]
