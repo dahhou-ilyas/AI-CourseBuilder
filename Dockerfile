@@ -1,4 +1,4 @@
-FROM node:18-alpine
+FROM node:16-alpine
 
 
 WORKDIR /app
@@ -14,4 +14,4 @@ COPY . .
 EXPOSE 3000
 
 
-CMD ["sh", "-c", "npx prisma migrate dev && npm run dev"]
+CMD ["sh", "-c", "npm run dev"]
