@@ -1,5 +1,6 @@
 import axios from "axios"
 import {YoutubeTranscript} from 'youtube-transcript'
+import { strict_output } from "./gpt";
 
 export async function searchYoutube(searchQuery:string){
     searchQuery=encodeURIComponent(searchQuery)
@@ -32,4 +33,27 @@ export async function getTranscript(videoId:string){
     } catch (error) {
         return ''
     }
+}
+
+export async function getQuestionFromTranscript(transcript:string,cours_title:string){
+    type Question={
+        question:string,
+        answer:string,
+        option1:string,
+        option2:string,
+        option3:string
+    }
+    const question:Question[]=await strict_output(
+        'You are a helpful AI that is able to generate mcq questions and answers, the length of each answer should not be more than 18 words',
+        new Array(5).fill(
+            `You are to generate a random hard mcq question about ${cours_title} with context of following transcript: ${transcript}`
+        ),{
+            question:'question',
+            answer:'answer with max length of 18 words',
+            option1:'option1 with max length of 18 words',
+            option2:'option2 with max length of 18 words',
+            option3:'option3 with max length of 18 words'
+        }
+    )
+    return question
 }

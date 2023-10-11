@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/db"
 import { strict_output } from "@/lib/gpt"
-import { getTranscript, searchYoutube } from "@/lib/youtube"
+import { getQuestionFromTranscript, getTranscript, searchYoutube } from "@/lib/youtube"
 import { NextResponse } from "next/server"
 import { z } from "zod"
 
@@ -24,13 +24,30 @@ export async function POST(req:Response,res:Response){
         }
         
         const vedeoId=await searchYoutube(chapter.youtubeSearchQuery);
-        const transcript=await getTranscript(vedeoId)
+        let transcript=await getTranscript(vedeoId)
+        let maxlength=500;
+        transcript=transcript.split(' ').slice(0,maxlength).join(' ')
 
         const {summary}:{summary:string}=await strict_output(
             'You are an AI capable of summarising a youtube transcript',
             "summarise in 250 words or less and do not talk of the sponsors or anything unrelated to the main topic, also do not introduce what the summary is about.\n"+transcript,
             {summary:'summary of the transcript'}
         )
+
+        const questions=await getQuestionFromTranscript(transcript,chapter.name)
+
+        await prisma.question.createMany({
+            data:questions.map(qst=>{
+                let options=[qst.answer,qst.option1,qst.option2,qst.option3]
+                options=options.sort(()=>Math.random()*0.5)
+                return{
+                    question:qst.question,
+                    answer:qst.answer,
+                    options:JSON.stringify(options),
+                    chapterId:chapterId
+                }
+            })
+        })
 
         return NextResponse.json({vedeoId,transcript,summary})
     } catch (error) {
