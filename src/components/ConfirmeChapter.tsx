@@ -23,7 +23,16 @@ function ConfirmeChapter({course}: Props) {
             chapterRef[chapter.id]=useRef(null)
         })
     })
-    console.log(chapterRef);
+    const [completeChapter,setCompleteChapter]=React.useState<Set<string>>(new Set())
+
+    //cette function permet de calculer le nombre totale des chaptire dans un coure
+    //en utilisant useMemo pour eviter de chaque fois on rendu la coposant de calculer en nouveau le nombre de chaptire,
+    //mais il refaire le calcule si le cours est change (donc en fait le calcule au debut de chaque generation de cours) ou si on change le cours
+    const totalChaptersCount=React.useMemo(()=>{
+        return course.units.reduce((acc,unit)=>{
+            return acc+unit.chapters.length
+        },0)
+    },[course.units])
   return (
     <div className='w-full mt-4'>
         {course.units.map((unit,unitIndex)=>{

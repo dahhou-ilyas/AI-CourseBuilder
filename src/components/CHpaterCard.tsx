@@ -4,6 +4,7 @@ import { useMutation } from '@tanstack/react-query'
 import axios from 'axios'
 import { Chapter } from 'prisma/prisma-client'
 import React, { useState } from 'react'
+import { useToast } from './ui/use-toast'
 
 type Props = {
     chapter:Chapter
@@ -16,7 +17,7 @@ export type ChapterCardHandler={
 
 //pour passer une Ref sur un componant spécialiser c'est à dire nous qui nous alons crée il faut utiliser ()
 const  CHpaterCard=React.forwardRef<ChapterCardHandler,Props>(({chapter,chapterIndex},ref)=> {
-    
+    const {toast}=useToast()
     const [sucess,setSucess]=useState<boolean | null>(null);
     const {mutate:getChapterInfo,isLoading}=useMutation({
         mutationFn:async ()=>{
@@ -31,7 +32,16 @@ const  CHpaterCard=React.forwardRef<ChapterCardHandler,Props>(({chapter,chapterI
         async triggerLoad(){
             getChapterInfo(undefined,{
                 onSuccess:()=>{
-                    console.log("success");
+                    setSucess(true);
+                },
+                onError:(error)=>{
+                    console.log(error);
+                    setSucess(false);
+                    toast({
+                        title:"Error",
+                        description:"Is an error in loading your chapter",
+                        variant:"destructive"
+                    })
                 }
             })
         }

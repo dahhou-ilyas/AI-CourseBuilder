@@ -48,8 +48,15 @@ export async function POST(req:Response,res:Response){
                 }
             })
         })
+        await prisma.chapter.update({
+            where:{id:chapterId},
+            data:{
+                videoId:vedeoId,
+                summary:summary,
+            }
+        })
 
-        return NextResponse.json({vedeoId,transcript,summary})
+        return NextResponse.json({success:true})
     } catch (error) {
         if(error instanceof z.ZodError){
             return NextResponse.json({
