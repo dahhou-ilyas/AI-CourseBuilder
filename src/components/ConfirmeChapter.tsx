@@ -74,7 +74,7 @@ function ConfirmeChapter({course}: Props) {
                 </Link>
                 {
                     totalChaptersCount==completedChapters.size ? (
-                        <Link href={`/cours/${course.id}/0/0`} className={buttonVariants({
+                        <Link href={`/course/${course.id}/0/0`} className={buttonVariants({
                             className:'ml-4 font-semibold'
                         })}>Save and continue
                         <ChevronRightCircle className='w-4 h-4 ml-2'/>
