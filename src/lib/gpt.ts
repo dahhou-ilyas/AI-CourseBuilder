@@ -9,8 +9,6 @@ interface OutputFormat {
   [key: string]: string | string[] | OutputFormat;
 }
 
-
-//fonctionnement : le fonction suivant donné une reponse sous format de json que souhaite utilisateur (lorsque la réponse n'est pas comme souhaiter en renvoyer la requet en chatgpt jusque en obtient la réponse sous format souhaiter)
 export async function strict_output(
   system_prompt: string,
   user_prompt: string | string[],

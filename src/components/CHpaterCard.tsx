@@ -5,10 +5,13 @@ import axios from 'axios'
 import { Chapter } from 'prisma/prisma-client'
 import React, { useState } from 'react'
 import { useToast } from './ui/use-toast'
+import { Loader2 } from 'lucide-react'
 
 type Props = {
-    chapter:Chapter
-    chapterIndex:number
+    chapter:Chapter;
+    chapterIndex:number;
+    completedChapters:Set<String>;
+    setCompletedChapters:React.Dispatch<React.SetStateAction<Set<String>>>;
 }
 export type ChapterCardHandler={
     triggerLoad:()=>void
@@ -16,48 +19,75 @@ export type ChapterCardHandler={
 
 
 //pour passer une Ref sur un componant spécialiser c'est à dire nous qui nous alons crée il faut utiliser ()
-const  CHpaterCard=React.forwardRef<ChapterCardHandler,Props>(({chapter,chapterIndex},ref)=> {
-    const {toast}=useToast()
-    const [sucess,setSucess]=useState<boolean | null>(null);
-    const {mutate:getChapterInfo,isLoading}=useMutation({
-        mutationFn:async ()=>{
-            const response=await axios. post("/api/chapter/getInfo",{
-               chapterId: chapter.id
-            })
-            return response.data
-        }
-    })
-    React.useImperativeHandle(ref,()=>({
-        //lorsque on click sur le button generating on execute le trigger function cette fonction appller en parallele getChapterInfo sur chaque card de chaptire cela permet de call endpoint "/api/chapter/getInfo" parallelement
-        async triggerLoad(){
-            getChapterInfo(undefined,{
-                onSuccess:()=>{
-                    setSucess(true);
-                },
-                onError:(error)=>{
-                    console.log(error);
-                    setSucess(false);
-                    toast({
-                        title:"Error",
-                        description:"Is an error in loading your chapter",
-                        variant:"destructive"
-                    })
-                }
-            })
-        }
-    }))
-  return (
-    <div key={chapter.id} className={
-        cn("px-4 py-2 mt-2 rounded flex justify-between",{
-            'bg-indigo-200 dark:bg-secondary/50':sucess==null,
-            "bg-red-400 dark:bg-red-500":sucess==false,
-            "bg-teal-400 dark:bg-green-500":sucess==true
-        })
-    }>
-        <h5>Chpater {chapterIndex+1} {chapter.name}</h5>
-    </div>
-  )
-})
+const  CHpaterCard=React.forwardRef<ChapterCardHandler,Props>(({chapter,chapterIndex,setCompletedChapters,completedChapters},ref)=> {
+    const { toast } = useToast();
+    const [success, setSuccess] = React.useState<boolean | null>(null);
+    const { mutate: getChapterInfo, isLoading } = useMutation({
+      mutationFn: async () => {
+        const response = await axios.post("/api/chapter/getInfo", {
+          chapterId: chapter.id,
+        });
+        return response.data;
+      },
+    });
 
-CHpaterCard.displayName="CHpaterCard"
-export default CHpaterCard
+
+    const addChapterIdToSet = React.useCallback(() => {
+        setCompletedChapters((prev) => {
+          const newSet = new Set(prev);
+          newSet.add(chapter.id);
+          return newSet;
+        });
+      }, [chapter.id, setCompletedChapters]);
+  
+      React.useEffect(() => {
+        if (chapter.videoId) {
+          setSuccess(true);
+          addChapterIdToSet;
+        }
+      }, [chapter, addChapterIdToSet]);
+  
+
+      React.useImperativeHandle(ref, () => ({
+        async triggerLoad() {
+          if (chapter.videoId) {
+            addChapterIdToSet();
+            return;
+          }
+          getChapterInfo(undefined, {
+            onSuccess: () => {
+              setSuccess(true);
+              addChapterIdToSet();
+            },
+            onError: (error) => {
+              console.error(error);
+              setSuccess(false);
+              toast({
+                title: "Error",
+                description: "There was an error loading your chapter",
+                variant: "destructive",
+              });
+              addChapterIdToSet();
+            },
+          });
+        },
+      }));
+      return (
+        <div
+          key={chapter.id}
+          className={cn("px-4 py-2 mt-2 rounded flex justify-between", {
+            "bg-secondary": success === null,
+            "bg-red-500": success === false,
+            "bg-green-500": success === true,
+          })}
+        >
+          <h5>{chapter.name}</h5>
+          {isLoading && <Loader2 className="animate-spin" />}
+        </div>
+      );
+    }
+  );
+  
+  CHpaterCard.displayName = "CHpaterCard";
+  
+  export default CHpaterCard;
