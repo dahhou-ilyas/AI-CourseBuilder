@@ -1,4 +1,6 @@
 import CourseSideBare from '@/components/CourseSideBare';
+import MainVideoSummary from '@/components/MainVideoSummary';
+import QuizCards from '@/components/QuizCards';
 import { prisma } from '@/lib/db';
 import { redirect } from 'next/navigation';
 import React from 'react'
@@ -16,7 +18,9 @@ async function CoursePage({params:{slug}}: Props) {
         include:{
             units:{
                 include:{
-                    chapters:true
+                    chapters:{
+                        include:{questions:true}
+                    }
                 }
             }
         }
@@ -40,8 +44,19 @@ async function CoursePage({params:{slug}}: Props) {
     }
 
   return (
+    <div>
+        <CourseSideBare course={coure} currentChapterId={chapter.id}/>
+        <div>
+            <div className='ml-[400px] px-8'>
+                <div className='flex'>
+                    <MainVideoSummary chapter={chapter} unit={unit} unitIndex={unitIndex} chapterIndex={chapterIndex}/>
+                    <QuizCards chapter={chapter}/>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <CourseSideBare course={coure} currentChapterId={chapter.id}/>
+    
   )
 }
 

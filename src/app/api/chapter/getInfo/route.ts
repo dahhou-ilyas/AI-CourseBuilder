@@ -55,29 +55,29 @@ export async function POST(req:Response){
 
         
         
-        //   const questions = await getQuestionFromTranscript(
-        //     transcript,
-        //     chapter.name
-        //   );
+          const questions = await getQuestionFromTranscript(
+            transcript,
+            chapter.name
+          );
       
        
 
-        // await prisma.question.createMany({
-        //   data: questions.map((question) => {
-        //     let options = [
-        //       question.answer,
-        //       question.option1,
-        //       question.option2,
-        //     ];
-        //     options = options.sort(() => Math.random() - 0.5);
-        //     return {
-        //       question: question.question,
-        //       answer: question.answer,
-        //       options: JSON.stringify(options),
-        //       chapterId: chapterId,
-        //     };
-        //   }),
-        // });
+        await prisma.question.createMany({
+          data: questions.map((question) => {
+            let options = [
+              question.answer,
+              question.option1,
+              question.option2,
+            ];
+            options = options.sort(() => Math.random() - 0.5);
+            return {
+              question: question.question,
+              answer: question.answer,
+              options: JSON.stringify(options),
+              chapterId: chapterId,
+            };
+          }),
+        });
 
 
         return NextResponse.json({success:true})
