@@ -15,7 +15,7 @@ type Props = {
 
 async function CourseSideBare({course,currentChapterId}: Props) {
   return (
-    <div className='w-[400px] absolute top-1/2 -translate-y-1/2 p-6 rounded-r-3xl bg-indigo-300'>
+    <div className='max-sm:hidden w-[400px] absolute top-1/2 -translate-y-1/2 p-6 rounded-r-3xl bg-indigo-300 dark:bg-secondary '>
         <h1 className='text-4xl font-bold'>
             {course.name}
         </h1>

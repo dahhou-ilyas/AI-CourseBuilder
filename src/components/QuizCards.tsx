@@ -1,3 +1,5 @@
+"use client"
+
 import { cn } from '@/lib/utils'
 import { Chapter, Question } from 'prisma/prisma-client'
 import React from 'react'
@@ -43,7 +45,11 @@ const QuizCards = ({chapter}: Props) => {
                     return(
                         <div key={question.id} className={cn(
                             "p-3 mt-4 border border-secondary rounded-lg"
-                        )}>
+                        ,{
+                          'bg-green-500':questionState[question.id]==true,
+                          'bg-red-500' : questionState[question.id]==false,
+                          'bg-secondary':questionState[question.id]==null,
+                        })}>
                            <h1 className='text-lg font-semibold'>{question.question}</h1> 
                            <div className='mt-2'>
                             <RadioGroup onValueChange={(e) => {

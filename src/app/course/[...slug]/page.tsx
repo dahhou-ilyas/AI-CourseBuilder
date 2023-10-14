@@ -47,7 +47,7 @@ async function CoursePage({params:{slug}}: Props) {
     <div>
         <CourseSideBare course={coure} currentChapterId={chapter.id}/>
         <div>
-            <div className='ml-[400px] px-8'>
+            <div className='sm:ml-[400px] px-8'>
                 <div className='flex'>
                     <MainVideoSummary chapter={chapter} unit={unit} unitIndex={unitIndex} chapterIndex={chapterIndex}/>
                     <QuizCards chapter={chapter}/>
