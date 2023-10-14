@@ -61,7 +61,7 @@ async function CoursePage({params:{slug}}: Props) {
                 <div className='flex pb-8'>
                     {
                         prevChapter && (
-                            <Link className='flex mt-4 mr-auto w-fit' href={`/course/${coure.id}/${unitIndex}/${chapterIndex-1}`}>
+                            <Link className='flex mt-4 ml-auto w-fit' href={`/course/${coure.id}/${unitIndex}/${chapterIndex-1}`}>
                                 <div className='flex items-center'>
                                     <ChevronLeftCircle className='w-6 h-6 mr-1'/>
                                     <div className='flex flex-col items-start'>
