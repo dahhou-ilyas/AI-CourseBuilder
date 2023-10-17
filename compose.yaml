@@ -1,10 +1,29 @@
 version: '3.3'
 services:
-  server1:
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+    # YOUTUBE_API_KEY:"key" il fau generer le key de youtube apartire de votre compt google
+    # OPENAI_API_KEY:"key" il fau generer le key de openAi apartire de votre compt openai
+      MYSQL_DATABASE: 'coursai'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - '3300:3306'
+    volumes:
+      - my-db:/var/lib/mysql
+  web:
     build:
       context: .
+      dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - 3000:3000
       - 9229:9229
+    depends_on:
+      - db
     volumes:
       - ./src:/app/src
+volumes:
+  my-db:
