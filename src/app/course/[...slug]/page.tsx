@@ -30,6 +30,8 @@ async function CoursePage({params:{slug}}: Props) {
     if(!coure){
         return redirect('/gallery');
     }
+    
+
     let unitIndex=parseInt(unitIndexParam);
     let chapterIndex=parseInt(chapterIndexParams);
 
@@ -43,6 +45,10 @@ async function CoursePage({params:{slug}}: Props) {
 
     if(!chapter){
         return redirect('/gallery');
+    }
+
+    if(!chapter.videoId){
+        return redirect(`/create/${coure.id}`)
     }
 
     const nextChapter=unit.chapters[chapterIndex+1];
